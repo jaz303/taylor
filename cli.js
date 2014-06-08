@@ -1,5 +1,5 @@
 var fs 			= require('fs');
-var Project 	= require('./lib/Project');
+var Package 	= require('./lib/Package');
 
 var options = require('docopt').docopt(fs.readFileSync(__dirname + '/usage.txt', 'utf8'), {
     help        : true,
@@ -10,24 +10,33 @@ var commands = {
 	'create' 		: require('./lib/handlers/create_project'),
 	'create-module'	: require('./lib/handlers/create_module'),
 	'install' 		: require('./lib/handlers/install_module'),
-	'build' 		: require('./lib/handlers/build_project')
+	'build' 		: require('./lib/handlers/build_project'),
+	'regen'			: require('./lib/handlers/regenerate')
 };
 
-var project = null;
+var pkg = null;
 try {
-	project = Project.tryLoadFromDirectory(null, '.');
+	pkg = Package.tryLoadFromDirectory(null, '.');
 } catch (e) {
-	console.error("error loading project!");
+	console.error("error loading package!");
 	console.error(e);
 }
 
-if (project) {
-	console.log("in a project!");
-}
+var command = null;
 
 for (var k in commands) {
 	if (options[k]) {
-		commands[k]();
+		command = commands[k](pkg, options);
 		break;
 	}
 }
+
+command
+	.then(function() {
+		console.log("DONE!");
+	})
+	.catch(function(err) {
+		console.error("ERROR");
+		console.error(err);
+		console.error(err.stack);
+	});

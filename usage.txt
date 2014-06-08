@@ -3,3 +3,4 @@ Usage:
     taylor create-module <module-name>
     taylor install <module-descriptor>
     taylor build
+    taylor regen
