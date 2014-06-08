@@ -1,4 +1,5 @@
 Usage:
-    taylor new <project-dir>
-    taylor install <module-descriptor>
+    taylor create <project-dir>
     taylor create-module <module-name>
+    taylor install <module-descriptor>
+    taylor build

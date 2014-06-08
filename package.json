@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/jaz303/taylor/issues"
   },
-  "homepage": "https://github.com/jaz303/taylor"
+  "homepage": "https://github.com/jaz303/taylor",
+  "dependencies": {
+    "docopt": "~0.4.0"
+  }
 }
