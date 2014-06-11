@@ -9,8 +9,8 @@ var options = require('docopt').docopt(fs.readFileSync(__dirname + '/usage.txt',
 var commands = {
     'create'        : require('./lib/handlers/create_app'),
     'create-module' : require('./lib/handlers/create_module'),
-    'install'       : require('./lib/handlers/install_module'),
-    'build'         : require('./lib/handlers/build_project'),
+    'install'       : require('./lib/handlers/install_package'),
+    'build'         : require('./lib/handlers/build_package'),
     'regen'         : require('./lib/handlers/regenerate')
 };
 

@@ -1,6 +1,6 @@
 Usage:
     taylor create <package>
     taylor create-module <package>
-    taylor install <module-descriptor>
-    taylor build
+    taylor install <module>
+    taylor build [<target>]
     taylor regen

@@ -21,6 +21,7 @@
   "homepage": "https://github.com/jaz303/taylor",
   "dependencies": {
     "docopt": "~0.4.0",
-    "es6-promise": "~1.0.0"
+    "es6-promise": "~1.0.0",
+    "git-clone": "0.0.3"
   }
 }
