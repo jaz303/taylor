@@ -11,7 +11,9 @@ var commands = {
     'create-module' : require('./lib/handlers/create_module'),
     'install'       : require('./lib/handlers/install_package'),
     'build'         : require('./lib/handlers/build_package'),
-    'regen'         : require('./lib/handlers/regenerate')
+    'regen'         : require('./lib/handlers/regenerate'),
+    'config'        : require('./lib/handlers/dump_config'),
+    'env'           : require('./lib/handlers/dump_environment')
 };
 
 var pkg = null;

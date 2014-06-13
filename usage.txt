@@ -3,4 +3,6 @@ Usage:
     taylor create-module <package>
     taylor install <module>
     taylor build [<target>]
+    taylor config
+    taylor env
     taylor regen
