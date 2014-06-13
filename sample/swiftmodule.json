@@ -1,6 +1,0 @@
-{
-	"name": "JFTestModule",
-	"targets": [
-		{ "type": "module" }
-	]
-}
