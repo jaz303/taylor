@@ -22,6 +22,7 @@
   "dependencies": {
     "docopt": "~0.4.0",
     "es6-promise": "~1.0.0",
-    "git-clone": "0.0.3"
+    "git-clone": "0.0.3",
+    "tmp": "0.0.23"
   }
 }
