@@ -11,6 +11,7 @@ var commands = {
     'create-module' : require('./lib/handlers/create_module'),
     'install'       : require('./lib/handlers/install_package'),
     'build'         : require('./lib/handlers/build_package'),
+    'make'          : require('./lib/handlers/build_make_target'),
     'regen'         : require('./lib/handlers/regenerate'),
     'config'        : require('./lib/handlers/dump_config'),
     'env'           : require('./lib/handlers/dump_environment')
