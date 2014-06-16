@@ -4,6 +4,7 @@ Usage:
     taylor install <module>
     taylor build [<target>]
     taylor make <target>
+    taylor regen
+    taylor invalidate
     taylor config
     taylor env
-    taylor regen

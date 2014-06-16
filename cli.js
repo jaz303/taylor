@@ -13,6 +13,7 @@ var commands = {
     'build'         : require('./lib/handlers/build_package'),
     'make'          : require('./lib/handlers/build_make_target'),
     'regen'         : require('./lib/handlers/regenerate'),
+    'invalidate'    : require('./lib/handlers/invalidate_package'),
     'config'        : require('./lib/handlers/dump_config'),
     'env'           : require('./lib/handlers/dump_environment')
 };
