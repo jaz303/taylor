@@ -1,6 +1,8 @@
 {
 	"name": "JFTestModule",
-	"targets": [
-		{ "type": "module" }
-	]
+	"targets": {
+		"app": {
+			"type": "app"
+		}
+	}
 }
