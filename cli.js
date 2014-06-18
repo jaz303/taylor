@@ -25,7 +25,9 @@ for (var k in commands) {
 }
 
 command.catch(function(err) {
-    console.error("ERROR");
-    console.error(err);
-    console.error(err.stack);
+    console.error(err.message);
+    if (true) {
+        console.error(err);
+        console.error(err.stack);
+    }
 });
