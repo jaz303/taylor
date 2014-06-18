@@ -17,7 +17,6 @@ try {
 }
 
 var command = null;
-
 for (var k in commands) {
     if (options[k]) {
         command = commands[k](pkg, options);
