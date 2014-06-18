@@ -19,15 +19,20 @@ try {
 var command = null;
 for (var k in commands) {
     if (options[k]) {
-        command = commands[k](pkg, options);
+        try {
+            commands[k](pkg, options).catch(reportFinalError);    
+        } catch (err) {
+            reportFinalError(err);
+        }
         break;
     }
 }
 
-command.catch(function(err) {
+function reportFinalError(err) {
     console.error(err.message);
-    if (true) {
+    if (true) { // TODO: trace option in options
         console.error(err);
         console.error(err.stack);
     }
-});
+    process.exit(1);
+}
