@@ -3,6 +3,7 @@ Usage:
     taylor create-module <package>
     taylor install <module>
     taylor build [<target>]
+    taylor run [<target>]
     taylor clean
     taylor zap
     taylor make <target>
