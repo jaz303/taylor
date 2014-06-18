@@ -1,3 +1,8 @@
+import Foo
+import JFTestMultiplicative
+
 func Foo() -> Int {
-	return 10;
+	return multiply(10, add(10, 2));
 }
+
+println(Foo())
