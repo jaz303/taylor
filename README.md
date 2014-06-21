@@ -8,7 +8,9 @@ So far, `taylor` supports:
   * Installation of modules directly from Git repositories
   * Building projects
 
-Taylor rides on top of `make(1)` and CLI tools; it is not an Xcode project generator.
+Taylor rides on top of `make(1)` and other CLI tools; it is not an Xcode project generator.
+
+Read on for installation instructions and a tutorial project. [Follow me on Twitter](http://twitter.com/jaz303) to keep up with development progress.
 
 ## Installation
 
@@ -27,10 +29,20 @@ $ npm install -g taylor
 
 ## Tutorial
 
-## Missing features that you'd expect in a real package manager/build tool
+## Technical Details
+
+## Current Limitations
+
+(aka missing features that you'd expect in a real package manager/build tool)
 
   - Automatic dependency resolution/installation!
   - Central package registry
   - Test running
   - Build profiles e.g. "debug", "release"
   - Linking against external libraries
+
+## Copyright &amp; License
+
+&copy; 2014 Jason Frame [ [@jaz303](http://twitter.com/jaz303) / [jason@onehackoranother.com](mailto:jason@onehackoranother.com) ]
+
+Released under the ISC license.
