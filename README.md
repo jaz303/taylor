@@ -1,8 +1,14 @@
 # taylor
 
-Taylor is an __experimental__ package manager and build tool for Apple's Swift programming language, developed to explore the possibilities for growing a module ecosystem around the language.
+Taylor is an __experimental__ package manager and build tool for Apple's Swift programming language, developed to explore the possibilities for growing a module ecosystem around the language. It's similar to tools like `npm` and `lein`.
 
-Taylor rides on top of `make(1)` and the cli; it is not compatible with Xcode.
+So far, `taylor` supports:
+
+  * Creation of packages
+  * Installation of modules directly from Git repositories
+  * Building projects
+
+Taylor rides on top of `make(1)` and CLI tools; it is not an Xcode project generator.
 
 ## Installation
 
@@ -27,3 +33,4 @@ $ npm install -g taylor
   - Central package registry
   - Test running
   - Build profiles e.g. "debug", "release"
+  - Linking against external libraries
