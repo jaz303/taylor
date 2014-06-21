@@ -1,7 +1,7 @@
 {
   "name": "taylor",
   "version": "0.1.0",
-  "description": "",
+  "description": "Experimental package manager for the Swift programming language",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
