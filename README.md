@@ -33,20 +33,18 @@ This preview version of `taylor` is written in Javascript; a native Swift implem
   1. Install node.js. Any recent version should do.
   2. `taylor` assumes that Xcode6 Beta is installed in the default location (`/Applications/Xcode6-Beta.app`). If this is not the case, define the environment variable `TAYLOR_SWIFT_TOOLCHAIN` to point to the `Contents/Developer/Toolchains/XcodeDefault.xctoolchain` subdirectory within wherever Xcode is installed.
 
-All set? Let's go:
+All set? Let's go (depending on your configuration the following command may require `sudo`):
 
     $ npm install -g taylor
 
-(depending on your configuration the above command may require `sudo`)
-
-Check that `taylor` was installed successfully:
+Now check that `taylor` was installed successfully:
 
     $ taylor -v
     0.0.2
 
 ## <a name='terminology'></a>Terminology
 
-`taylor`'s installable units are called _packages_. A package defines one or more _targets_, each of which has a single _target type_. Two target types are currently defined: _module target_, which builds a Swift module that can be imported by other packages, and _app target_, which builds an executable binary, possibly composed of other packages.
+`taylor`'s installable units are called _packages_. A package defines one or more _targets_, each of a given _target type_. Two target types are currently defined: _module target_, which builds a Swift module that can be imported by other packages, and _app target_, which builds an executable binary, possibly importing other packages.
 
 For brevity's sake, the terms _app_ and _module_ may be used to refer to packages with targets of type app and module, respectively.
 
@@ -132,27 +130,33 @@ func Main() -> Int {
 75
 ```
 
-
-
-
-
 ## <a name='technical'></a>Technical Details
 
 ## <a name='reference'></a>Command Reference
 
-#### `taylor create <package>`
+#### `taylor create-app <package>`
 
-Create a new package
+Create a new skeleton package named `package` with an initial build target of type `app` in the current directory.
 
 #### `taylor create-module <package>`
 
+Create a new skeleton module named `package` with an initial build target of type `module`.
+
+If this command is run in the context of an existing package the new module is created inside the package's `modules` directory. Otherwise, the new module is created in the current directory.
+
 #### `taylor install <module>`
+
+Installs `module` in the `modules` directory of the current package.
+
+For now, `module` must be the URL of a `git` repository although shortcuts exist for installation from Github. The following are all equivalent:
+
+    $ taylor install git@github.com:jaz303/JFTestAdditive.git
+    $ taylor install github:jaz303/JFTestAdditive
+    $ taylor install gh:jaz303/JFTestAdditive
 
 #### `taylor build [<target>]`
 
-Build `target`.
-
-If `target` is unspecified, all targets will be built.
+Builds the given target. If `target` is unspecified, all targets will be built.
 
 #### `taylor run [<target>]`
 
@@ -194,13 +198,13 @@ Dump Taylor's entire environment to the console.
 
 `taylor` is an experimental tool and currently offers only the minimum functionality to enable module sharing between authors. It currently lacks:
 
-  # Automatic dependency resolution/installation!
-  # Central package registry
-  # Build profiles e.g. "debug", "release"
-  # Allow targets to explicit state their dependent source files
-  # Invoke REPL
-  # Test running
-  # Linking against external (C) libraries
+  1. Automatic dependency resolution/installation!
+  2. Central package registry
+  3. Build profiles e.g. "debug", "release"
+  4. Allow targets to explicit state their dependent source files
+  5. Invoke REPL
+  6. Test running
+  7. Linking against external (C) libraries
   
 Of these, 1 &amp; 2 are non-trivial, although tools like `bundler` and `npm` have already contributed a lot of work in this space which `taylor` should be able to draw upon. It is expected that tackling the other shortcomings on the list will be straightforward.
 
