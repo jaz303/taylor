@@ -1,19 +1,17 @@
 # taylor
 
-Taylor is an experimental package manager and build tool for Swift.
+Taylor is an __experimental__ package manager and build tool for Apple's Swift programming language, developed to explore the possibilities for growing a module ecosystem around the language. It borrows elements from similar tools like `npm`, `lein` and `bundler`.
 
 ## Contents
 
   - [Overview](#overview)
   - [Installation](#installation)
   - [Tutorial](#tutorial)
-  - [Technical details](#technical)
+  - [Technical Details](#technical)
   - [Command Reference](#reference)
   - [Current Limitations](#limitations)
 
 ## <a name='overview'></a>Overview
-
-Taylor is an __experimental__ package manager and build tool for Apple's Swift programming language, developed to explore the possibilities for growing a module ecosystem around the language. It borrows elements from similar tools like `npm`, `lein` and `bundler`.
 
 So far, `taylor` supports:
 
@@ -34,13 +32,85 @@ Read on for installation instructions and a tutorial project. [Follow me on Twit
 
 All set? Let's go:
 
-```
-$ npm install -g taylor
-```
+    $ npm install -g taylor
 
 (depending on your configuration the above command may require `sudo`)
 
 ## <a name='tutorial'></a>Tutorial
+
+    $ taylor create TaylorTest
+    
+    $ cd TaylorTest
+    
+    $ find .
+
+    .
+    ./.gitignore
+    ./src
+    ./src/main.swift
+    ./swiftpkg.json
+
+    $ cat swiftpkg.json
+
+```json
+{
+    "name": "TaylorTest",
+    "targets": {
+        "app": {
+            "type": "app"
+        }
+    }
+}
+```
+
+    $ cat src/main.swift
+
+```swift
+func Main() -> Int {
+    println("Hello world!");
+    return 0;
+}
+```
+
+    $ taylor build
+    
+    $ taylor run
+    Hello world!
+
+    $ taylor install gh:jaz303/JFTestAdditive
+    $ taylor install gh:jaz303/JFTestMultiplicative
+    $ ls modules
+
+    $ vim src/math.swift
+
+```swift
+import JFTestAdditive
+import JFTestMultiplicative
+
+func DoMath() -> Int {
+    return add(15, multiply(30, 2));
+}
+```
+
+    $ vim src/main.swift
+
+```swift
+func Main() -> Int {
+    println(DoMath());
+    return 0;
+}
+```
+
+    $ taylor build
+    $ taylor run
+
+```
+75
+```
+
+
+
+
 
 ## <a name='technical'></a>Technical Details
 
@@ -98,7 +168,7 @@ Dump Taylor's entire environment to the console.
 
 ## <a name='limitations'></a>Current Limitations
 
-(aka missing features that you'd expect in a real package manager/build tool)
+AKA missing features that you'd expect to find in a real package manager/build tool.
 
 ### Easy
 
