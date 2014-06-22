@@ -1,5 +1,14 @@
 # taylor
 
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Tutorial](#tutorial)
+  - [Technical details](#technical)
+  - [Command Reference](#reference)
+  - [Current Limitations](#limitations)
+
+## <a name='overview'></a>Overview
+
 Taylor is an __experimental__ package manager and build tool for Apple's Swift programming language, developed to explore the possibilities for growing a module ecosystem around the language. It's similar to tools like `npm` and `lein`.
 
 So far, `taylor` supports:
@@ -12,7 +21,7 @@ Taylor rides on top of `make(1)` and other CLI tools; it is not an Xcode project
 
 Read on for installation instructions and a tutorial project. [Follow me on Twitter](http://twitter.com/jaz303) to keep up with development progress.
 
-## Installation
+## <a name='installation'></a>Installation
 
 ### Prerequisites
 
@@ -27,11 +36,11 @@ $ npm install -g taylor
 
 (depending on your configuration the above command may require `sudo`)
 
-## Tutorial
+## <a name='tutorial'></a>Tutorial
 
-## Technical Details
+## <a name='technical'></a>Technical Details
 
-## Command Reference
+## <a name='reference'></a>Command Reference
 
 #### `taylor create <package>`
 
@@ -83,7 +92,7 @@ Dump all of Taylor's effective configuration variables to the console.
 
 Dump Taylor's entire environment to the console.
 
-## Current Limitations
+## <a name='limitations'></a>Current Limitations
 
 (aka missing features that you'd expect in a real package manager/build tool)
 
@@ -103,7 +112,7 @@ These are a little harder:
 
 ### Hard
 
-And thse will be somewhat time-consuming:
+And these will be somewhat time-consuming:
 
   - Automatic dependency resolution/installation!
   - Central package registry
