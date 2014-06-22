@@ -1,11 +1,20 @@
 # taylor
 
-Taylor is an __experimental__ package manager and build tool for Apple's Swift programming language, developed to explore the possibilities for growing a module ecosystem around the language. It borrows elements from similar tools like `npm`, `lein` and `bundler`.
+`taylor` is an __experimental__ package manager and build tool for Apple's Swift programming language, developed to explore the possibilities for growing a module ecosystem around the language. It borrows elements from similar tools such as `npm`, `lein` and `bundler`.
+
+With `taylor`'s command line interface you can:
+
+  * Create projects
+  * Install 3rd party module packages directly from Git repositories
+  * Build applications with a single command
+
+Read on for installation instructions and a tutorial project. Please [follow me on Twitter](http://twitter.com/jaz303) to keep up with development progress.
 
 ## Contents
 
   - [Overview](#overview)
   - [Installation](#installation)
+  - [Terminology](#terminology)
   - [Tutorial](#tutorial)
   - [Technical Details](#technical)
   - [Command Reference](#reference)
@@ -13,15 +22,9 @@ Taylor is an __experimental__ package manager and build tool for Apple's Swift p
 
 ## <a name='overview'></a>Overview
 
-So far, `taylor` supports:
+`taylor` rides on top of `make(1)` and other CLI tools; it is not an Xcode project generator.
 
-  * Creation of packages
-  * Installation of modules directly from Git repositories
-  * Building projects
-
-Taylor rides on top of `make(1)` and other CLI tools; it is not an Xcode project generator.
-
-Read on for installation instructions and a tutorial project. [Follow me on Twitter](http://twitter.com/jaz303) to keep up with development progress.
+This preview version of `taylor` is written in Javascript; a native Swift implementation is a worthwhile long-term goal but no work in this direction will begin until the final versions of the Swift compiler and language specification have been released. In light of this, Javascript should be considered a mere implementation detail, not a core part of `taylor`'s specification.
 
 ## <a name='installation'></a>Installation
 
@@ -35,6 +38,17 @@ All set? Let's go:
     $ npm install -g taylor
 
 (depending on your configuration the above command may require `sudo`)
+
+Check that `taylor` was installed successfully:
+
+    $ taylor -v
+    0.0.2
+
+## <a name='terminology'></a>Terminology
+
+`taylor`'s installable units are called _packages_. A package defines one or more _targets_, each of which has a single _target type_. Two target types are currently defined: _module target_, which builds a Swift module that can be imported by other packages, and _app target_, which builds an executable binary, possibly composed of other packages.
+
+For brevity's sake, the terms _app_ and _module_ may be used to refer to packages with targets of type app and module, respectively.
 
 ## <a name='tutorial'></a>Tutorial
 
@@ -73,13 +87,23 @@ func Main() -> Int {
 ```
 
     $ taylor build
+
+    $ ls -l build/app
+    total 88
+    -rwxr-xr-x+ 1 jason  staff  44200 22 Jun 11:36 app
+    drwxr-xr-x+ 5 jason  staff    170 22 Jun 11:36 lib
+    drwxr-xr-x+ 6 jason  staff    204 22 Jun 11:35 module
     
     $ taylor run
     Hello world!
 
     $ taylor install gh:jaz303/JFTestAdditive
     $ taylor install gh:jaz303/JFTestMultiplicative
-    $ ls modules
+    
+    $ ls -l modules
+    total 0
+    drwxr-xr-x  7 jason  staff  238 22 Jun 11:35 JFTestAdditive
+    drwxr-xr-x  7 jason  staff  238 22 Jun 11:35 JFTestMultiplicative
 
     $ vim src/math.swift
 
@@ -138,17 +162,17 @@ If unspecified, `target` will default to the package's first available `app` tar
 
 #### `taylor clean`
 
-Delete all build products. Does not remove Makefiles or any other files created by `taylor regen`.
+Delete all build products for the current package. Does not remove supporting Makefiles or any other files created by `taylor regen`.
 
 #### `taylor zap`
 
 Recursively delete all build products, Makefiles and any other generated files, including those contained within installed modules. Use this command to force a fresh build of your entire project tree.
 
-Be warned, this command is somewhat indiscriminate and will delete any `build` directory it encounters, regardless of whether it was created by Taylor or not.
+Be warned, this command is somewhat indiscriminate and will delete any `build` directory it encounters, regardless of whether or not it was created by Taylor.
 
 #### `taylor make <target>`
 
-Low level command; run an explicit `make` target inside Taylor's environment.
+Low level command; run an explicit `make` rule inside Taylor's environment.
 
 #### `taylor regen`
 
@@ -168,28 +192,17 @@ Dump Taylor's entire environment to the console.
 
 ## <a name='limitations'></a>Current Limitations
 
-AKA missing features that you'd expect to find in a real package manager/build tool.
+`taylor` is an experimental tool and currently offers only the minimum functionality to enable module sharing between authors. It currently lacks:
 
-### Easy
-
-These features can each be added in &lte; 1 day:
-
-  - Build profiles e.g. "debug", "release"
-  - Allow targets to explicit state their dependent source files
-
-### Medium
-
-These are a little harder:
-
-  - Test running
-  - Linking against external (C) libraries
-
-### Hard
-
-And these will be somewhat time-consuming:
-
-  - Automatic dependency resolution/installation!
-  - Central package registry
+  # Automatic dependency resolution/installation!
+  # Central package registry
+  # Build profiles e.g. "debug", "release"
+  # Allow targets to explicit state their dependent source files
+  # Invoke REPL
+  # Test running
+  # Linking against external (C) libraries
+  
+Of these, 1 &amp; 2 are non-trivial, although tools like `bundler` and `npm` have already contributed a lot of work in this space which `taylor` should be able to draw upon. It is expected that tackling the other shortcomings on the list will be straightforward.
 
 ## Copyright &amp; License
 
