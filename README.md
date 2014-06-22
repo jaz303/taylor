@@ -1,5 +1,9 @@
 # taylor
 
+Taylor is an experimental package manager and build tool for Swift.
+
+## Contents
+
   - [Overview](#overview)
   - [Installation](#installation)
   - [Tutorial](#tutorial)
@@ -9,7 +13,7 @@
 
 ## <a name='overview'></a>Overview
 
-Taylor is an __experimental__ package manager and build tool for Apple's Swift programming language, developed to explore the possibilities for growing a module ecosystem around the language. It's similar to tools like `npm` and `lein`.
+Taylor is an __experimental__ package manager and build tool for Apple's Swift programming language, developed to explore the possibilities for growing a module ecosystem around the language. It borrows elements from similar tools like `npm`, `lein` and `bundler`.
 
 So far, `taylor` supports:
 
