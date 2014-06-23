@@ -1,5 +1,5 @@
 Usage:
-    taylor create <package>
+    taylor create-app <package>
     taylor create-module <package>
     taylor install <module>
     taylor build [<target>]
