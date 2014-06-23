@@ -50,19 +50,25 @@ For brevity's sake, the terms _app_ and _module_ may be used to refer to package
 
 ## <a name='tutorial'></a>Tutorial
 
-    $ taylor create TaylorTest
-    
-    $ cd TaylorTest
-    
-    $ find .
+In this short tutorial I'll run you through the process of creating a package, pulling in code from external modules, and finally moving code to your own module.
 
-    .
+Let's start by creating a new project:
+
+    $ taylor create-app TaylorTest
+
+We've just asked `taylor` to create a new app, or more concisely, a package with a single `app` target. Let's see what it's made for us:
+
+    $ cd TaylorTest
+    $ find . -type f
     ./.gitignore
-    ./src
     ./src/main.swift
     ./swiftpkg.json
 
+Not a whole lot! `taylor` tries to keep things simple. `.gitignore` is self-explanatory, let's check out the other two.
+
     $ cat swiftpkg.json
+
+`taylor` stores per-package metadata in `swiftpkg.json`. It's somewhat spartan but this will soon be augmented with other details such as package author, version, description etc. From this we see that the package has the same name as we passed to our `taylor create-app` command, and that it defines a single target, `app`, of type `app`.
 
 ```json
 {
@@ -75,7 +81,11 @@ For brevity's sake, the terms _app_ and _module_ may be used to refer to package
 }
 ```
 
+Next we'll check out the generated souce code for our test project:
+
     $ cat src/main.swift
+
+Let's see...
 
 ```swift
 func Main() -> Int {
@@ -84,26 +94,59 @@ func Main() -> Int {
 }
 ```
 
+Not much computer science going on in here, but that's okay, I'll leave that to you. One thing to note is that (unlike Xcode Playgrounds) `taylor` does not permit any top-level statements; all code must be contained within functions and classes, with `Main()` as the entry point.
+
+OK, so we've seen what `taylor` generates for us. Let's compile some code!
+
     $ taylor build
+
+If all is well this command should complete without incident. Let's take a look at what's happened.
+
+    $ ls -l
+    total 16
+    -rw-r--r--+ 1 jason  staff  3830 22 Jun 11:35 Makefile.taylor
+    drwxr-xr-x+ 3 jason  staff   102 22 Jun 11:30 build
+    drwxr-xr-x+ 4 jason  staff   136 22 Jun 11:36 src
+    -rw-r--r--+ 1 jason  staff   105 22 Jun 11:26 swiftpkg.json
+
+Two new entries: `Makefile.taylor`, an auto-generated file that describes how to build our project (`taylor` is essentially an opinionated wrapper around `make`), and `build`, a directory containing all of the project build artifacts. We'll ignore the makefile for now (but feel free to poke about, I've tried my best to keep it human-readable) so let's take a closer look inside the `build` directory.
 
     $ ls -l build/app
     total 88
     -rwxr-xr-x+ 1 jason  staff  44200 22 Jun 11:36 app
     drwxr-xr-x+ 5 jason  staff    170 22 Jun 11:36 lib
     drwxr-xr-x+ 6 jason  staff    204 22 Jun 11:35 module
+
+Here we've got an executable (`app`) and a couple of directories, `lib` and `module`, for compiled Swift modules (compiled Swift modules are comprised of two files, a `.swiftmodule` which is essentially a compiled header + AST, and a `.dylib`, which contains the actual executable module code).
+
+To run our app, we _could_ type `./build/app/app`, but `taylor` offers a `build` command as a shorcut:
     
     $ taylor run
     Hello world!
 
+Whoohoo!
+
+OK, so the spec for our app has been changed; hello-world is no longer acceptable and instead we've been asked to perform some basic maths. In some circumstances using basic operators like `+` and `-` might be acceptable but in this contrived instance we'll play the role of paranoid programmers who are worried the definitions of primitive mathematical operations might change and as such extract the operations to a couple of modules.
+
+So let's install a couple of modules to do the maths mojo for us:
+
     $ taylor install gh:jaz303/JFTestAdditive
     $ taylor install gh:jaz303/JFTestMultiplicative
+
+The `gh:user/repo` format above is a shorthand notation that instructs `taylor` to install the requested module directly from Github. Assuming these commands go without a hitch, let's see what they did:
     
     $ ls -l modules
     total 0
     drwxr-xr-x  7 jason  staff  238 22 Jun 11:35 JFTestAdditive
     drwxr-xr-x  7 jason  staff  238 22 Jun 11:35 JFTestMultiplicative
 
+Cool, so it's added a top-level `modules` directory and put the module code in there. If you take a peek in the current directory you'll also notice that `Makefile.taylor` has vanished - this is because a fresh build rules are required now that new modules have been installed; `taylor` will automatically regenerate these the next time `taylor build` is invoked. But first let's modify our app code to make use of the modules we've just installed.
+
+We're going to put this in a new file to show `taylor` deals with multiple source files. Open `src/math.swift` in your favourite editor:
+
     $ vim src/math.swift
+
+And make it look like this:
 
 ```swift
 import JFTestAdditive
@@ -114,7 +157,11 @@ func DoMath() -> Int {
 }
 ```
 
+Next, edit `src/main.swift`:
+
     $ vim src/main.swift
+
+And replace the greeting with a call to our new `DoMath()` function:
 
 ```swift
 func Main() -> Int {
@@ -123,12 +170,21 @@ func Main() -> Int {
 }
 ```
 
+All done, let's build the project:
+
     $ taylor build
+
+Again, this should complete without incident. Note that we didn't need to tell `taylor` where to find our modules, it just set everything up for us automatically (a quick check of `Makefile.taylor`) will verify this.
+
+Let's run some code!
+
     $ taylor run
 
 ```
 75
 ```
+
+Boom.
 
 ## <a name='technical'></a>Technical Details
 
@@ -201,7 +257,7 @@ Dump Taylor's entire environment to the console.
   1. Automatic dependency resolution/installation!
   2. Central package registry
   3. Build profiles e.g. "debug", "release"
-  4. Allow targets to explicit state their dependent source files
+  4. Allow targets to explicitly state their dependent source files
   5. Invoke REPL
   6. Test running
   7. Linking against external (C) libraries
