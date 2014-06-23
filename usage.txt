@@ -11,3 +11,4 @@ Usage:
     taylor invalidate
     taylor config
     taylor env
+    taylor -h | --help | --version
