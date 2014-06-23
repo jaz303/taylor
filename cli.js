@@ -1,5 +1,7 @@
 var fs          = require('fs');
+var path        = require('path');
 var commands    = require('./lib/commands');
+var K           = require('./lib/constants');
 var Package     = require('./lib/Package');
 
 var options = require('docopt').docopt(fs.readFileSync(__dirname + '/usage.txt', 'utf8'), {
@@ -7,14 +9,23 @@ var options = require('docopt').docopt(fs.readFileSync(__dirname + '/usage.txt',
     version     : require('./package.json').version
 });
 
-var pkg = null;
-try {
-    pkg = Package.tryLoadFromDirectory(null, '.');
-} catch (e) {
-    console.error("error loading package!");
+function packageLoadError() {
+    console.error("error loading package metadata!");
     console.error(e);
     process.exit(1);
 }
+
+var parentPkg = null;
+if (path.basename(fs.realpathSync('..')) === K.MODULES_DIR) {
+    try {
+        parentPkg = Package.tryLoadFromDirectory(null, '../..');
+    } catch (e) { packageLoadError(e); }
+}
+
+var pkg = null;
+try {
+    pkg = Package.tryLoadFromDirectory(parentPkg, '.');
+} catch (e) { packageLoadError(e); }
 
 var command = null;
 for (var k in commands) {
