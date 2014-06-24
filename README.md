@@ -18,7 +18,6 @@ Read on for installation instructions and a tutorial project. Please [follow me 
   - [Installation](#installation)
   - [Terminology](#terminology)
   - [Tutorial](#tutorial)
-  - [Technical Details](#technical)
   - [Command Reference](#reference)
   - [Current Limitations](#limitations)
 
@@ -41,7 +40,7 @@ All set? Let's go (depending on your configuration the following command may req
 
 Now check that `taylor` was installed successfully:
 
-    $ taylor -v
+    $ taylor --version
     0.3.0
 
 ## <a name='terminology'></a>Terminology
@@ -104,31 +103,46 @@ OK, so we've seen what `taylor` generates for us. Let's compile some code!
 
 If all is well this command should complete without incident. Let's take a look at what's happened.
 
-    $ ls -l
-    total 16
-    -rw-r--r--+ 1 jason  staff  3830 22 Jun 11:35 Makefile.taylor
-    drwxr-xr-x+ 3 jason  staff   102 22 Jun 11:30 build
-    drwxr-xr-x+ 4 jason  staff   136 22 Jun 11:36 src
-    -rw-r--r--+ 1 jason  staff   105 22 Jun 11:26 swiftpkg.json
+```shell
+$ ls -l
+total 16
+-rw-r--r--+ 1 jason  staff  3830 22 Jun 11:35 Makefile.taylor
+drwxr-xr-x+ 3 jason  staff   102 22 Jun 11:30 build
+drwxr-xr-x+ 4 jason  staff   136 22 Jun 11:36 src
+-rw-r--r--+ 1 jason  staff   105 22 Jun 11:26 swiftpkg.json
+```
 
 Two new entries: `Makefile.taylor`, an auto-generated file that describes how to build our project (`taylor` is essentially an opinionated wrapper around `make`), and `build`, a directory containing all of the project build artifacts. We'll ignore the makefile for now (but feel free to poke about, I've tried my best to keep it human-readable) so let's take a closer look inside the `build` directory.
 
-    $ ls -l build/app
-    total 88
-    -rwxr-xr-x+ 1 jason  staff  44200 22 Jun 11:36 app
-    drwxr-xr-x+ 5 jason  staff    170 22 Jun 11:36 lib
-    drwxr-xr-x+ 6 jason  staff    204 22 Jun 11:35 module
+```shell
+$ ls -l build
+total 0
+drwxr-xr-x+  3 jason  staff  102 24 Jun 16:04 app
+drwxr-xr-x+ 14 jason  staff  476 24 Jun 16:04 modules
 
-Here we've got an executable (`app`) and a couple of directories, `lib` and `module`, for compiled Swift modules (compiled Swift modules are comprised of two files, a `.swiftmodule` which is essentially a compiled header + AST, and a `.dylib`, which contains the actual executable module code).
+$ ls -l build/app
+total 88
+-rwxr-xr-x+ 1 jason  staff  44208 24 Jun 16:04 app
 
-To run our app, we _could_ type `./build/app/app`, but `taylor` offers a `build` command as a shorcut:
+$ ls -l build/modules
+total 112
+-rw-r--r--+ 1 jason  staff    504 24 Jun 18:34 app_main.swiftdoc
+-rw-r--r--+ 1 jason  staff   7408 24 Jun 18:34 app_main.swiftmodule
+-rwxr-xr-x+ 1 jason  staff  44020 24 Jun 18:34 libapp_main.dylib
+```
+
+Here we've got an executable (`build/app/app`) and a `modules` directory containing the Swift modules used by our project (compiled Swift modules are comprised of two files: a `.swiftmodule`, essentially a compiled header + AST, and a `.dylib`, which contains the actual executable module code).
+
+To run our app, we _could_ type `./build/app/app`, but as a shortcut `taylor` has a `run` command. Let's use it:
     
     $ taylor run
     Hello world!
 
-Whoohoo!
+Whoohoo, it works.
 
-OK, so the spec for our app has been changed; hello-world is no longer acceptable and instead we've been asked to perform some basic maths. In some circumstances using basic operators like `+` and `-` might be acceptable but in this contrived instance we'll play the role of paranoid programmers who are worried the definitions of primitive mathematical operations might change and as such extract the operations to a couple of modules.
+Next let's imagine the spec for our simple app has changed and that "hello world" is no longer acceptable and that we've instead been asked to replace it with some basic maths.
+
+ circumstances using basic operators like `+` and `-` might be acceptable but in this contrived instance we'll play the role of paranoid programmers who are worried the definitions of primitive mathematical operations might change and as such extract the operations to a couple of modules.
 
 So let's install a couple of modules to do the maths mojo for us:
 
@@ -142,9 +156,9 @@ The `gh:user/repo` format above is a shorthand notation that instructs `taylor` 
     drwxr-xr-x  7 jason  staff  238 22 Jun 11:35 JFTestAdditive
     drwxr-xr-x  7 jason  staff  238 22 Jun 11:35 JFTestMultiplicative
 
-Cool, so it's added a top-level `modules` directory and put the module code in there. If you take a peek in the current directory you'll also notice that `Makefile.taylor` has vanished - this is because a fresh build rules are required now that new modules have been installed; `taylor` will automatically regenerate these the next time `taylor build` is invoked. But first let's modify our app code to make use of the modules we've just installed.
+Cool, so it's added a top-level `modules` directory and put the module code in there. If you take a peek in the current directory you'll also notice that `Makefile.taylor` has vanished - this is because a fresh build rules are required now that new modules have been installed; `taylor` will automatically regenerate this the next time `taylor build` is invoked.
 
-We're going to put this in a new file to show `taylor` deals with multiple source files. Open `src/math.swift` in your favourite editor:
+Let's modify our app code to make use of the modules we've just installed. We'll place this code in a new file to demonstrate `taylor`'s ability to deal with multiple source files. Open `src/math.swift` in your favourite editor:
 
     $ vim src/math.swift
 
@@ -154,8 +168,8 @@ And make it look like this:
 import JFTestAdditive
 import JFTestMultiplicative
 
-func DoMath() -> Int {
-    return add(15, multiply(30, 2));
+func DoubleAndAddFive(x : Int) -> Int {
+    return add(multiply(x, 2), 5);
 }
 ```
 
@@ -163,11 +177,11 @@ Next, edit `src/main.swift`:
 
     $ vim src/main.swift
 
-And replace the greeting with a call to our new `DoMath()` function:
+And replace the greeting with a call to our new `DoubleAndAddFive()` function:
 
 ```swift
 func Main() -> Int {
-    println(DoMath());
+    println(DoubleAndAddFive(30));
     return 0;
 }
 ```
@@ -181,24 +195,34 @@ Again, this should complete without incident. Note that we didn't need to tell `
 Let's run some code!
 
     $ taylor run
+    65
 
-```
-75
-```
+Sweet, that looks right. We're not quite done yet though - the ability to double an integer and add five might be useful to others in the future so the final task we're going to work through in this tutorial is extract said heavy-duty mathematics into a module.
+
+We'll begin by creating an empty module:
 
     $ taylor create-module TestModule
+
+Next we must move our code into this new module's `main.swift`. Edit:
+
     vim modules/TestModule/src/main.swift
+
+And add in this code:
 
 ```swift
 import JFTestAdditive
 import JFTestMultiplicative
 
-func DoMath() -> Int {
-    return add(multiply(10,30),20);
+func DoubleAndAddFive(x : Int) -> Int {
+    return add(multiply(x, 2), 5);
 }
 ```
 
+Note that `TestModule` calls functions that are defined in the `JFTestAdditive` and `JFTestMultiplicative` modules. In order that `taylor` can link against these modules and build the project successfully they must therefore be listed as dependencies of our new module. To do this, edit `TestModule`'s `swiftpkg.json`:
+
     vim modules/TestModule/swiftpkg.json
+
+And add the names of the dependencies to the module target's `requires` key:
 
 ```json
 {
@@ -215,26 +239,31 @@ func DoMath() -> Int {
 }
 ```
 
+Next, we no longer need the original definition of `DoubleAndAddFive()` so let's just delete it:
+
   $ rm src/math.swift
+
+Finally we'll import `TestModule` so its functions are visible from our app's entry point. Edit:
+
   $ vim src/main.swift
+
+And add the import at the top of the file:
 
 ```swift
 import TestModule
 
 func Main() -> Int {
-    println(DoMath());
+    println(DoubleAndAddFive(30));
     return 0;
 }
 ```
 
+Phew! Let's build and run!
+
     $ taylor build
     $ taylor run
+    65
 
-
-
-
-
-## <a name='technical'></a>Technical Details
 
 ## <a name='reference'></a>Command Reference
 
