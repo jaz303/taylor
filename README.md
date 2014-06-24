@@ -69,7 +69,7 @@ Not a whole lot! `taylor` tries to keep things simple. `.gitignore` is self-expl
 
     $ cat swiftpkg.json
 
-`taylor` stores per-package metadata in `swiftpkg.json`. Right now it's somewhat spartan but this will soon be augmented with other details such as package author, version, description etc. We can from the contents that the package has the same name as we passed to our `taylor create-app` command, and that it defines a single target, `app`, of type `app`.
+`taylor` stores per-package metadata in `swiftpkg.json`. Right now it's somewhat spartan but this will soon be augmented with other details such as package author, version, description etc. We can see from the contents that the package has the same name as we passed to our `taylor create-app` command, and that it defines a single target, `app`, of type `app`.
 
 ```json
 {
@@ -149,7 +149,7 @@ Modules are installed via the `taylor install` subcommand. Let's go:
     $ taylor install gh:jaz303/JFTestAdditive
     $ taylor install gh:jaz303/JFTestMultiplicative
 
-The `gh:user/repo` format above is a simple shorthand notation that instructs `taylor` to install the requested module directly from Github. Assuming these commands go without a hitch, let's observe the effects:
+The `gh:user/repo` format above is a simple shorthand notation that instructs `taylor` to install the requested module directly from Github (alternatively any valid Git URL may be used). Assuming these commands go without a hitch, let's observe the effects:
     
     $ ls -l modules
     total 0
@@ -197,15 +197,17 @@ Let's run some code!
     $ taylor run
     65
 
-Sweet, that looks right. We're not quite done yet though - the ability to double an integer and add five might be useful to others in the future so the final task we're going to work through in this tutorial is to extract said heavy-duty mathematics into a module.
+Sweet, that looks right. We're not quite done yet though - the ability to double an integer and add five might be useful to others in the future so the final task we're going to work through in this tutorial is to extract said heavy-duty mathematics into its own module.
 
 We'll begin by creating an empty module:
 
     $ taylor create-module TestModule
 
-Next we must move our code into this new module's `main.swift`. Edit:
+Notice that `taylor` detected that we ran this command from inside another package and (correctly) decided to place our new module inside the parent module's `modules` directory.
 
-    vim modules/TestModule/src/main.swift
+Next we must move our existing definition of `DoubleAndAddFive()` into the new module. Edit:
+
+    $ vim modules/TestModule/src/main.swift
 
 And add in this code:
 
@@ -218,7 +220,7 @@ func DoubleAndAddFive(x : Int) -> Int {
 }
 ```
 
-Note that `TestModule` calls functions that are defined in the `JFTestAdditive` and `JFTestMultiplicative` modules. In order that `taylor` can link against these modules and build the project successfully they must therefore be listed as dependencies of our new module. To do this, edit `TestModule`'s `swiftpkg.json`:
+We can see that `TestModule` calls functions that are defined in the `JFTestAdditive` and `JFTestMultiplicative` modules. In order that `taylor` can link against these modules and build the project successfully they must therefore be listed as dependencies of our new module. To do this, edit `TestModule`'s `swiftpkg.json`:
 
     vim modules/TestModule/swiftpkg.json
 
@@ -241,11 +243,11 @@ And add the names of the dependencies to the module target's `requires` key:
 
 Next, we no longer need the original definition of `DoubleAndAddFive()` so let's just delete it:
 
-  $ rm src/math.swift
+    $ rm src/math.swift
 
 Finally we'll import `TestModule` so its functions are visible from our app's entry point. Edit:
 
-  $ vim src/main.swift
+    $ vim src/main.swift
 
 And add the import at the top of the file:
 
@@ -264,6 +266,17 @@ Phew! Let's build and run!
     $ taylor run
     65
 
+Success! That brings us to the end of the tutorial. Let's quickly recap on what we've learned:
+
+  * how to create a new `taylor` app project
+  * how to build and run code
+  * how to install modules from Git(hub)
+  * how to create a submodule
+  * how to configure a submodule to depend on other modules
+
+You should now know enough to go forth and experiment by writing your own packages. I expect there to be many bugs and edge cases in `taylor`'s current (preview) implementation - please report any you find on the Github issue tracker.
+
+For a full command reference, read on...
 
 ## <a name='reference'></a>Command Reference
 
