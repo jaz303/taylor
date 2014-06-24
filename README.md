@@ -2,11 +2,13 @@
 
 `taylor` is an __experimental__ package manager and build tool for Apple's Swift programming language, developed to explore the possibilities for growing a module ecosystem around the language. It borrows elements from similar tools such as `npm`, `lein` and `bundler`.
 
-With `taylor`'s command line interface you can:
+With `taylor`'s command line interface you can currently:
 
   * Create projects
   * Install 3rd party module packages directly from Git repositories
-  * Build applications with a single command
+  * Build applications and their dependencies with a single command
+
+(this is just the start, check out the [Current Limitations](#limitations) to see plans for future directions)
 
 Read on for installation instructions and a tutorial project. Please [follow me on Twitter](http://twitter.com/jaz303) to keep up with development progress.
 
@@ -174,7 +176,7 @@ All done, let's build the project:
 
     $ taylor build
 
-Again, this should complete without incident. Note that we didn't need to tell `taylor` where to find our modules, it just set everything up for us automatically (a quick check of `Makefile.taylor`) will verify this.
+Again, this should complete without incident. Note that we didn't need to tell `taylor` where to find our modules, nor did we have to instruct it about the new source file - the entire build process was configured for us automatically (a quick check of `Makefile.taylor` will verify this).
 
 Let's run some code!
 
@@ -184,7 +186,53 @@ Let's run some code!
 75
 ```
 
-Boom.
+    $ taylor create-module TestModule
+    vim modules/TestModule/src/main.swift
+
+```swift
+import JFTestAdditive
+import JFTestMultiplicative
+
+func DoMath() -> Int {
+    return add(multiply(10,30),20);
+}
+```
+
+    vim modules/TestModule/swiftpkg.json
+
+```json
+{
+    "name": "TestModule",
+    "targets": {
+        "module": {
+            "type": "module",
+            "requires": [
+                "JFTestAdditive",
+                "JFTestMultiplicative"
+            ]
+        }
+    }
+}
+```
+
+  $ rm src/math.swift
+  $ vim src/main.swift
+
+```swift
+import TestModule
+
+func Main() -> Int {
+    println(DoMath());
+    return 0;
+}
+```
+
+    $ taylor build
+    $ taylor run
+
+
+
+
 
 ## <a name='technical'></a>Technical Details
 
@@ -257,7 +305,7 @@ Dump Taylor's entire environment to the console.
   1. Automatic dependency resolution/installation!
   2. Central package registry
   3. Build profiles e.g. "debug", "release"
-  4. Allow targets to explicitly state their dependent source files
+  4. Allow targets to explicitly state their required source files
   5. Invoke REPL
   6. Test running
   7. Linking against external (C) libraries
