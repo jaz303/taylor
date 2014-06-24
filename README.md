@@ -51,7 +51,7 @@ For brevity's sake, the terms _app_ and _module_ may be used to refer to package
 
 ## <a name='tutorial'></a>Tutorial
 
-In this short tutorial I'll run you through the process of creating a package, pulling in code from external modules, and finally moving code to your own module.
+In this short tutorial I'll walk through the process of creating a package, pulling in code from external modules, and finally extracting reusable code to its own module.
 
 Let's start by creating a new project:
 
@@ -65,11 +65,11 @@ We've just asked `taylor` to create a new app, or more concisely, a package with
     ./src/main.swift
     ./swiftpkg.json
 
-Not a whole lot! `taylor` tries to keep things simple. `.gitignore` is self-explanatory, let's check out the other two.
+Not a whole lot! `taylor` tries to keep things simple. `.gitignore` is self-explanatory so let's check out the other two.
 
     $ cat swiftpkg.json
 
-`taylor` stores per-package metadata in `swiftpkg.json`. It's somewhat spartan but this will soon be augmented with other details such as package author, version, description etc. From this we see that the package has the same name as we passed to our `taylor create-app` command, and that it defines a single target, `app`, of type `app`.
+`taylor` stores per-package metadata in `swiftpkg.json`. Right now it's somewhat spartan but this will soon be augmented with other details such as package author, version, description etc. We can from the contents that the package has the same name as we passed to our `taylor create-app` command, and that it defines a single target, `app`, of type `app`.
 
 ```json
 {
@@ -95,7 +95,7 @@ func Main() -> Int {
 }
 ```
 
-Not much computer science going on in here, but that's okay, I'll leave that to you. One thing to note is that (unlike Xcode Playgrounds) `taylor` does not permit any top-level statements; all code must be contained within functions and classes, with `Main()` as the entry point.
+Not much computer science going on in here, but that's okay - I'll leave that to you. One thing to note is that (unlike Xcode Playgrounds) `taylor` does not permit any top-level statements; all code must be contained within functions and classes, with `Main()` as the entry point.
 
 OK, so we've seen what `taylor` generates for us. Let's compile some code!
 
@@ -140,16 +140,16 @@ To run our app, we _could_ type `./build/app/app`, but as a shortcut `taylor` ha
 
 Whoohoo, it works.
 
-Next let's imagine the spec for our simple app has changed and that "hello world" is no longer acceptable and that we've instead been asked to replace it with some basic maths.
+So far we've demonstrated `taylor`'s role as a build tool by creating a new project, writing some code, and (hopefully) having it build successfully and run. But being a build tool is only half of `taylor`'s remit - it's a package manager, too - so the next we're going to do is pull in some code from other packages.
 
- circumstances using basic operators like `+` and `-` might be acceptable but in this contrived instance we'll play the role of paranoid programmers who are worried the definitions of primitive mathematical operations might change and as such extract the operations to a couple of modules.
+Imagine the spec for our simple app has changed and that "hello world" is no longer acceptable. Instead we've been asked to double a number then add five to it. Now, in normal circumstances we could use basic operators like `+` and `-`, but in this contrived instance let's assume we're paranoid that the definitions of primitive mathematical operations might change in the future. To defend against this we'll import the operations from a couple of modules.
 
-So let's install a couple of modules to do the maths mojo for us:
+Modules are installed via the `taylor install` subcommand. Let's go:
 
     $ taylor install gh:jaz303/JFTestAdditive
     $ taylor install gh:jaz303/JFTestMultiplicative
 
-The `gh:user/repo` format above is a shorthand notation that instructs `taylor` to install the requested module directly from Github. Assuming these commands go without a hitch, let's see what they did:
+The `gh:user/repo` format above is a simple shorthand notation that instructs `taylor` to install the requested module directly from Github. Assuming these commands go without a hitch, let's observe the effects:
     
     $ ls -l modules
     total 0
@@ -158,7 +158,7 @@ The `gh:user/repo` format above is a shorthand notation that instructs `taylor` 
 
 Cool, so it's added a top-level `modules` directory and put the module code in there. If you take a peek in the current directory you'll also notice that `Makefile.taylor` has vanished - this is because a fresh build rules are required now that new modules have been installed; `taylor` will automatically regenerate this the next time `taylor build` is invoked.
 
-Let's modify our app code to make use of the modules we've just installed. We'll place this code in a new file to demonstrate `taylor`'s ability to deal with multiple source files. Open `src/math.swift` in your favourite editor:
+Let's modify our app code to make use of the modules we've just installed. We'll place this code in a new file to demonstrate `taylor`'s ability to deal with multiple source files so open `src/math.swift` in your favourite editor:
 
     $ vim src/math.swift
 
@@ -197,7 +197,7 @@ Let's run some code!
     $ taylor run
     65
 
-Sweet, that looks right. We're not quite done yet though - the ability to double an integer and add five might be useful to others in the future so the final task we're going to work through in this tutorial is extract said heavy-duty mathematics into a module.
+Sweet, that looks right. We're not quite done yet though - the ability to double an integer and add five might be useful to others in the future so the final task we're going to work through in this tutorial is to extract said heavy-duty mathematics into a module.
 
 We'll begin by creating an empty module:
 
