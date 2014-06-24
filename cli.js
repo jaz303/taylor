@@ -9,9 +9,9 @@ var options = require('docopt').docopt(fs.readFileSync(__dirname + '/usage.txt',
     version     : require('./package.json').version
 });
 
-function packageLoadError() {
+function packageLoadError(err) {
     console.error("error loading package metadata!");
-    console.error(e);
+    console.error(err);
     process.exit(1);
 }
 
