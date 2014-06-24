@@ -42,7 +42,7 @@ All set? Let's go (depending on your configuration the following command may req
 Now check that `taylor` was installed successfully:
 
     $ taylor -v
-    0.0.2
+    0.3.0
 
 ## <a name='terminology'></a>Terminology
 
